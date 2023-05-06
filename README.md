@@ -1,6 +1,6 @@
 # ent-example
 
-Simplest possible Ent example: one model with one field.
+Simple Ent example: one model with two fields.
 
 ```shell
 go run main.go

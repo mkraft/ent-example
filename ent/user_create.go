@@ -18,6 +18,20 @@ type UserCreate struct {
 	hooks    []Hook
 }
 
+// SetName sets the "name" field.
+func (uc *UserCreate) SetName(s string) *UserCreate {
+	uc.mutation.SetName(s)
+	return uc
+}
+
+// SetNillableName sets the "name" field if the given value is not nil.
+func (uc *UserCreate) SetNillableName(s *string) *UserCreate {
+	if s != nil {
+		uc.SetName(*s)
+	}
+	return uc
+}
+
 // SetType sets the "type" field.
 func (uc *UserCreate) SetType(u user.Type) *UserCreate {
 	uc.mutation.SetType(u)
@@ -97,6 +111,10 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 		_node = &User{config: uc.config}
 		_spec = sqlgraph.NewCreateSpec(user.Table, sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt))
 	)
+	if value, ok := uc.mutation.Name(); ok {
+		_spec.SetField(user.FieldName, field.TypeString, value)
+		_node.Name = &value
+	}
 	if value, ok := uc.mutation.GetType(); ok {
 		_spec.SetField(user.FieldType, field.TypeEnum, value)
 		_node.Type = &value

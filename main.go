@@ -20,22 +20,23 @@ func main() {
 		log.Printf("failed creating schema resources: %v", err)
 	}
 
-	user := client.User.Create().SetType("admin").SaveX(context.Background())
+	user := client.User.Create().SetType("admin").SetName("Jane Doe").SaveX(context.Background())
 
 	user, err = client.User.Get(context.Background(), user.ID)
 	if err != nil {
 		log.Printf("failed getting user: %v", err)
 	}
-	fmt.Printf("after Create\t%v\t%s\n", user, "saved correctly")
+	fmt.Printf("after create\n\t%v\n", user)
 
 	user.Type = nil
-	fmt.Printf("before Update\t%v\t\t%s\n", user, "type is nil")
+	user.Name = nil
+	fmt.Printf("before update\n\t%v\n", user)
 
 	user.Update().SaveX(context.Background())
 	user = client.User.GetX(context.Background(), user.ID)
-	fmt.Printf("after Update\t%v\t%s\n", user, "nil value is not saved by Update alone")
+	fmt.Printf("after update (fields are not persisted as null)\n\t%v\n", user)
 
-	user.Update().ClearType().SaveX(context.Background())
+	user.Update().ClearType().ClearName().SaveX(context.Background())
 	user = client.User.GetX(context.Background(), user.ID)
-	fmt.Printf("after ClearType\t%v\t\t%s\n", user, "nil value is saved by ClearType")
+	fmt.Printf("after update with ClearType and ClearName (fields are persisted as null)\n\t%v\n", user)
 }
