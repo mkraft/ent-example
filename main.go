@@ -25,14 +25,16 @@ func main() {
 	if err != nil {
 		log.Fatalf("failed getting user: %v", err)
 	}
-	log.Println("after save\t\t", user)
+	log.Printf("after create\t%v\t%s", user, "proving that it was saved correctly")
 
 	user.Type = nil
-	log.Println("before update\t", user)
+	log.Printf("before update\t%v\t\t%s", user, "note that type is nil")
 
-	user = user.Update().SaveX(context.Background())
-	log.Println("after update\t", user)
+	user.Update().SaveX(context.Background())
+	user = client.User.GetX(context.Background(), user.ID)
+	log.Printf("after update\t%v\t%s", user, "the nil value is not saved by (*ent.User).Update")
 
-	user = user.Update().ClearType().SaveX(context.Background())
-	log.Println("after cleartype\t", user)
+	user.Update().ClearType().SaveX(context.Background())
+	user = client.User.GetX(context.Background(), user.ID)
+	log.Printf("after cleartype\t%v\t\t%s", user, "now type is actually nil")
 }
