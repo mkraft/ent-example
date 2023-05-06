@@ -15,18 +15,17 @@ func main() {
 		log.Printf("failed opening connection to sqlite: %v", err)
 	}
 	defer client.Close()
-	// Run the auto migration tool.
+
 	if err := client.Schema.Create(context.Background()); err != nil {
 		log.Printf("failed creating schema resources: %v", err)
 	}
 
 	user := client.User.Create().SetType("admin").SaveX(context.Background())
 
-	_, err = client.User.Get(context.Background(), user.ID)
+	user, err = client.User.Get(context.Background(), user.ID)
 	if err != nil {
 		log.Printf("failed getting user: %v", err)
 	}
-	user = client.User.GetX(context.Background(), user.ID)
 	fmt.Printf("after Create\t%v\t%s\n", user, "saved correctly")
 
 	user.Type = nil
